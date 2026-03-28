@@ -1,0 +1,44 @@
+# Build and installation directories
+build/
+install/
+log/
+
+# Dependencies
+**/node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ROS specific
+**/*.dcv
+**/*.o
+**/*.a
+**/*.so
+.colcon/
+
+# Gazebo
+.gazebo/
+.ignition/
+
+# ROS logs
+*.log
+
+# Temporary files
+.tmp/
+tmp/
+
+# Package manager
+*.lock
