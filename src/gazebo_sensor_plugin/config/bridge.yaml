@@ -1,0 +1,9 @@
+# Bridge configuration for ros_gz_bridge parameter_bridge
+# Maps Gazebo transport topics to ROS 2 topics
+# Format: YAML sequence of bridge entries with ros_type_name and gz_type_name
+
+- ros_topic_name: "/imu/data"
+  ros_type_name: "sensor_msgs/msg/Imu"
+  gz_topic_name: "/gz/sim/imu/data"
+  gz_type_name: "gz.msgs.IMU"
+  direction: GZ_TO_ROS

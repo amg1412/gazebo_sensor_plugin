@@ -1,0 +1,140 @@
+<?xml version="1.0" ?>
+<!-- Simple robot world with IMU sensor for testing the plugin -->
+<sdf version="1.9">
+  <world name="imu_sensor_world">
+    <!-- Physics configuration -->
+    <physics name="default_physics" type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+
+    <!-- Gravity -->
+    <gravity>0 0 -9.8</gravity>
+
+    <!-- Ground plane -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Simple robot model with IMU -->
+    <model name="test_robot">
+      <pose>0 0 0.1 0 0 0</pose>
+      
+      <!-- Base link -->
+      <link name="base_link">
+        <inertial>
+          <mass>1.0</mass>
+          <inertia>
+            <ixx>0.01</ixx>
+            <iyy>0.01</iyy>
+            <izz>0.01</izz>
+          </inertia>
+        </inertial>
+        
+        <!-- Collision geometry -->
+        <collision name="base_collision">
+          <geometry>
+            <box>
+              <size>0.2 0.2 0.1</size>
+            </box>
+          </geometry>
+        </collision>
+        
+        <!-- Visual geometry -->
+        <visual name="base_visual">
+          <geometry>
+            <box>
+              <size>0.2 0.2 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0 0 1 1</ambient>
+            <diffuse>0 0 1 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
+          </material>
+        </visual>
+      </link>
+
+      <!-- IMU link (typically at the center of the robot) -->
+      <link name="imu_link">
+        <pose relative_to="base_link">0 0 0 0 0 0</pose>
+        <inertial>
+          <mass>0.1</mass>
+          <inertia>
+            <ixx>0.001</ixx>
+            <iyy>0.001</iyy>
+            <izz>0.001</izz>
+          </inertia>
+        </inertial>
+        
+        <collision name="imu_collision">
+          <geometry>
+            <sphere>
+              <radius>0.02</radius>
+            </sphere>
+          </geometry>
+        </collision>
+        
+        <visual name="imu_visual">
+          <geometry>
+            <sphere>
+              <radius>0.02</radius>
+            </sphere>
+          </geometry>
+          <material>
+            <ambient>1 0 0 1</ambient>
+            <diffuse>1 0 0 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
+          </material>
+        </visual>
+      </link>
+
+      <!-- Weld base_link and imu_link together -->
+      <joint name="base_imu_joint" type="fixed">
+        <child>imu_link</child>
+        <parent>base_link</parent>
+      </joint>
+
+      <!-- Noise-augmented IMU sensor plugin -->
+      <plugin name="noise_imu_sensor" filename="libnoise_imu_sensor.so">
+        <!-- The link on which the IMU is mounted -->
+        <link_name>imu_link</link_name>
+        
+        <!-- Noise parameters (Gaussian distribution) -->
+        <accel_noise_sigma>0.01</accel_noise_sigma>      <!-- m/s² -->
+        <gyro_noise_sigma>0.001</gyro_noise_sigma>         <!-- rad/s -->
+        <mag_noise_sigma>0.1</mag_noise_sigma>             <!-- Tesla -->
+        
+        <!-- Publication rate -->
+        <update_rate>100</update_rate>                     <!-- Hz -->
+        
+        <!-- Output Gazebo transport topic -->
+        <output_topic>/gz/sim/imu/data</output_topic>
+      </plugin>
+    </model>
+  </world>
+</sdf>
